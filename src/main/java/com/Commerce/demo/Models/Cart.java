@@ -1,9 +1,11 @@
 package com.Commerce.demo.Models;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "Carts")
 public class Cart extends Base{
