@@ -11,6 +11,7 @@ public class CartDto {
     private int id;
     private int customerId;
     private List<Integer> orderIds;
+    private List<Integer> productIds;
 
     public Cart toEntity() {
         Cart cart = new Cart();
@@ -24,9 +25,9 @@ public class CartDto {
         if (cart.getCustomer() != null) {
             cartDto.setCustomerId(cart.getCustomer().getId());
         }
-        if (cart.getOrders() != null) {
-            cartDto.setOrderIds(cart.getOrders().stream()
-                    .map(order -> order.getId())
+        if (cart.getProducts() != null) { // Change to products
+            cartDto.setProductIds(cart.getProducts().stream()
+                    .map(product -> product.getId())
                     .collect(Collectors.toList()));
         }
         return cartDto;

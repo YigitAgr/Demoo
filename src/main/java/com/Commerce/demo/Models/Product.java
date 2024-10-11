@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,6 +19,21 @@ public class Product extends Base{
     private int productStock;
 
     //one product can have multiple orders but order can only have one product
-    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<Order> order;
+    @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
+    private List<Order> orders = new ArrayList<>();
+
+
+    @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
+    private List<Cart> carts = new ArrayList<>();
+
+
+    //taken from internet to escapa toString error
+    @Override
+    public String toString() {
+        return "Product{" +
+                "productName='" + productName + '\'' +
+                ", productPrice=" + productPrice +
+                '}';
+    }
+
 }
