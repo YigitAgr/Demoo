@@ -10,24 +10,16 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "Products")
-public class Product extends Base{
-
+public class Product extends Base {
 
     private String productName;
     private String productDescription;
     private BigDecimal productPrice;
     private int productStock;
 
-    //one product can have multiple orders but order can only have one product
-    @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
-    private List<Order> orders = new ArrayList<>();
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<CartItem> cartItems = new ArrayList<>(); // This allows Product to know its CartItems.
 
-
-    @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
-    private List<Cart> carts = new ArrayList<>();
-
-
-    //taken from internet to escapa toString error
     @Override
     public String toString() {
         return "Product{" +
@@ -35,5 +27,4 @@ public class Product extends Base{
                 ", productPrice=" + productPrice +
                 '}';
     }
-
 }
