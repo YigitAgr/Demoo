@@ -9,6 +9,7 @@ import com.Commerce.demo.Models.Product;
 import com.Commerce.demo.Repositorys.CartRepository;
 import com.Commerce.demo.Repositorys.OrderRepository;
 import com.Commerce.demo.Repositorys.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,23 +43,26 @@ public class CartService {
     }
 
     public CartDto updateCart(int customerId, CartDto cartDto) {
-        Cart cart = cartRepository.findByCustomerId(customerId);
+        try {
+            Cart cart = cartRepository.findByCustomerId(customerId);
+            if (cart != null) {
+                cart.getCartItems().clear(); // Clear existing cart items
 
-        if (cart != null) {
-            cart.getCartItems().clear(); // Clear existing cart items
+                for (Integer productId : cartDto.getProductIds()) {
+                    Product product = productRepository.findById(productId)
+                            .orElseThrow(() -> new IllegalArgumentException("Product not found: " + productId));
 
-            for (Integer productId : cartDto.getProductIds()) {
-                Product product = productRepository.findById(productId)
-                        .orElseThrow(() -> new IllegalArgumentException("Product not found. "));
-
-                // Assuming you want to add the product with a default quantity of 1
-                cart.addProduct(product, 1);
+                    // Assuming you want to add the product with a default quantity of 1
+                    cart.addProduct(product, 1);
+                }
+                cart.calculateTotalPrice();
+                cartRepository.save(cart);
+                return CartDto.fromEntity(cart);
+            } else {
+                throw new EntityNotFoundException("Cart not found for customer " );
             }
-            cart.calculateTotalPrice();
-            cartRepository.save(cart);
-            return CartDto.fromEntity(cart);
-        } else {
-            return null;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update cart");
         }
     }
 
